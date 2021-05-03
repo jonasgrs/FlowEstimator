@@ -8,7 +8,16 @@ import math
 
 
 def get_fixed_diameter(dT_set, max_demand, dp_set):
-    # based on UESgraphs Utilities size hydraunic network
+    """
+    Sizes a pipe based on the set temperature difference between supply
+    and return, the maximum heat demand in the pipe and the set pressure drop.
+    Based on UESgraphs Utilities "size_hydraunic_network" function.
+
+    :param dT_set:      int:    temperature difference between supply & return
+    :param max_demand:  int:    maximum demand in [Watt]
+    :param dp_set:      int:    pressure drop in [Pa/m]
+    :return: diameter:  int:    sized pipe diameter in [m]
+    """
 
     # fixed Diameter Values
     diameters = [
@@ -58,7 +67,15 @@ def get_fixed_diameter(dT_set, max_demand, dp_set):
 
 
 def get_optimal_diameter(dT_set, max_demand, dp_set):
-    # based on UESgraphs Utilities size hydraunic network
+    """
+    comparable to 'get_fixed_diameter' function, but allows diameter values
+    to be any value, not only the set DN values of pipe-suppliers.
+
+    :param dT_set:      int:    temperature difference between supply & return
+    :param max_demand:  int:    maximum demand in [Watt]
+    :param dp_set:      int:    pressure drop in [Pa/m]
+    :return: diameter:  int:    sized pipe diameter in [m]
+    """
 
     # calculate m_flow
     cp = 4180  # J/(kg*K)
@@ -74,8 +91,21 @@ def get_optimal_diameter(dT_set, max_demand, dp_set):
 
 
 def get_max_allowed_flow_velocity(dn, is_supply_pipe=True):
+    """
+    gets the maximum allowed flow velocity for a given pipe diameter,
+    based on Nussbaumer et. al: http://dx.doi.org/10.1016/j.energy.2016.02.062
 
-    # from Nussbaumer: http://dx.doi.org/10.1016/j.energy.2016.02.062.
+    :param dn:                      int:    diameter of pipe in meters
+    :param is_supply_pipe:          bool:   decide if connecting or supply
+                                            pipe. conencting pipes are the
+                                            ones directly conencted to houses
+                                            and thus smaller max allowed flow
+                                            velocities due to noise emissions
+    :return: max_allowed_velocity:  float:  max allowed flow velocity in
+                                            chosen pipe
+    """
+
+    # Dataframe of all diameters with associated max flow values
     diameters = {
         0.015: [0.6, 0.5],
         0.02: [0.6, 0.5],
@@ -109,20 +139,28 @@ def get_max_allowed_flow_velocity(dn, is_supply_pipe=True):
                                  1: "max flow connecting pipe"},
                         inplace=True)
 
-    # decide if connecting or supply pipe. conencting pipes are the ones
-    # directly conencted to houses and thus smaller max. allowed flow
-    # velocities due to noise emissions
+    # decide if connecting or supply pipe
     if is_supply_pipe:
         col = "max flow supply pipe"
     else:
         col = "max flow connecting pipe"
 
-    velocity = diameters_df.loc[dn, col]
+    max_allowed_velocity = diameters_df.loc[dn, col]
 
-    return velocity  # in m/s
+    return max_allowed_velocity  # in m/s
 
 
 def get_flow_velocity(diameter, max_demand, dT):
+    """
+    Computes the resulting flow rate in a pipe, based on its diameter,
+    the heat demand in [W] and the temperature difference between supply and
+    return pipe in [K]
+
+    :param diameter:    int:    sized pipe diameter in [m]
+    :param max_demand:  int:    maximum demand in [Watt]
+    :param dT:          int:    temperature difference in [K]
+    :return: velocity   float:  resulting water flow velocity in [m/s]
+    """
 
     cp = 4180  # J/(kg*K)
     m_flow = max_demand / (cp * dT)
@@ -132,4 +170,4 @@ def get_flow_velocity(diameter, max_demand, dT):
 
     velocity = m_flow / (water_density * math.pi * diameter**2)
 
-    return velocity
+    return velocity  # in m/s
