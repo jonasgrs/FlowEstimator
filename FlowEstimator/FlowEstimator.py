@@ -90,15 +90,15 @@ def get_optimal_diameter(dT_set, max_demand, dp_set):
     return diameter
 
 
-def get_max_allowed_flow_velocity(dn, is_supply_pipe=True):
+def get_max_allowed_flow_velocity(dn, is_supply_pipe=False):
     """
     gets the maximum allowed flow velocity for a given pipe diameter,
     based on Nussbaumer et. al: http://dx.doi.org/10.1016/j.energy.2016.02.062
 
     :param dn:                      int:    diameter of pipe in meters
     :param is_supply_pipe:          bool:   decide if connecting or supply
-                                            pipe. conencting pipes are the
-                                            ones directly conencted to houses
+                                            pipe. connecting pipes are the
+                                            ones directly connected to houses
                                             and thus smaller max allowed flow
                                             velocities due to noise emissions
     :return: max_allowed_velocity:  float:  max allowed flow velocity in

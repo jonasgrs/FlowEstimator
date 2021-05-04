@@ -1,17 +1,18 @@
 from FlowEstimator import FlowEstimator as flowest
 
+"""
+Compares the flow velocity before the retrofit to the flow velocity after
+the retrofit and the maximum allowed flow velocity.
+"""
+
 # --- Inputs Construction ---
 dT_set_construction = 20  # Kelvin
-max_demand_construction = 10000  # Watt
-dp_set_construction = 60  # Pascal/Meter
+max_demand_construction = 30000  # Watt
+dp_set_construction = 350  # Pascal/Meter
 
 # .--- Inputs Use Phase ---
 dT_set_use = 4  # Kelvin
-max_demand_use = 5000  # Watt
-dp_set_use = dp_set_construction  # Pascal/Meter
-
-
-# --- Constants ---
+max_demand_use = 20000  # Watt
 
 
 def main():
